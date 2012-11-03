@@ -1,3 +1,16 @@
+#
+# cmd_line_sample.py
+#
+# Created on: November 3, 2012
+# Author: Valeri Karpov
+#
+# An example usage of CommandLineInjector - a very general method for stripping
+# padding from a sample file. While this is a somewhat trivial example, it
+# highlights some of the more useful features of this library - managing object
+# ("square") life cycle, wiring two methods / "circles" together, constructing
+# squares from command line params, and a minimum of non-reusable boilerplate
+#
+
 from CommandLineInjector import *
 import inspect
 
