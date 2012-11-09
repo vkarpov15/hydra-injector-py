@@ -55,6 +55,8 @@ def writeUnpaddedFile(writer, lines = "method:removePaddingFromFile"):
   for line in lines:
     writer.writeLine(line)
 
+#### This is boilerplate
+#### Sample run: python cmd_line_sample.py writeUnpaddedFile --f="../test" --outfile=../test2
 class MyRunner:
   def run(self, method, params):
     return eval(method)(**params)
@@ -62,4 +64,13 @@ class MyRunner:
   def getSpecs(self, method):
     return inspect.getargspec(eval(method))
 
-CommandLineInjector().addClass("reader", FileReader).addClass("writer", FileWriter).addMethod("removePaddingFromFile").addMethod("writeUnpaddedFile").run(MyRunner())
+# Binding magic. Roughly translated:
+#   1) Whenever a method or class asks for something called "reader", it means
+#      a FileReader where the constructor parameter "infile" is taken from
+#      command line parameter -f
+#   2) Similar to above, "writer" is a FileWriter where all of its constructor
+#      parameters are taken from command line parameter with same name
+# 3/4) Add the methods removePaddingFromFile and writeUnpaddedFile as callable
+#      methods from command line
+#   5) Run using command line arguments using the runner from this scope
+CommandLineInjector().addClass("reader", FileReader, { "infile" : "f" }).addClass("writer", FileWriter).addMethod("removePaddingFromFile").addMethod("writeUnpaddedFile").run(MyRunner())

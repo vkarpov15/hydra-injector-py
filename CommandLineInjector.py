@@ -19,7 +19,10 @@ class CommandLineInjector:
     self.op = sys.argv[1]
     params = {}
     for i in range(2, len(sys.argv)):
-      params[sys.argv[i][len("--"):sys.argv[i].find("=")]] = sys.argv[i][sys.argv[i].find("=") + 1:]
+      if sys.argv[i][0:len("--")] == "--":
+        params[sys.argv[i][len("--"):sys.argv[i].find("=")]] = sys.argv[i][sys.argv[i].find("=") + 1:]
+      elif sys.argv[i][0] == '-':
+        params[sys.argv[i][len("-"):sys.argv[i].find("=")]] = sys.argv[i][sys.argv[i].find("=") + 1:]
 
     self.injector = Injector(params)
 
@@ -28,7 +31,6 @@ class CommandLineInjector:
 
   def run(self, runner):
     self.injector.run(self.op, runner)
-    print "Done"
 
   def addInstantiation(self, key, value):
     self.injector.addInstantiation(key, value)
@@ -38,6 +40,7 @@ class CommandLineInjector:
     self.injector.methods.append(method)
     return self
 
-  def addClass(self, key, clazz):
+  def addClass(self, key, clazz, paramMapping = {}):
     self.injector.nameToClassMap[key] = clazz
+    self.injector.nameToParamBindings[key] = paramMapping
     return self

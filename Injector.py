@@ -14,6 +14,7 @@ class Injector:
 
   def __init__(self, params):
     self.nameToClassMap = {}
+    self.nameToParamBindings = {}
     self.params = params
     self.instantiated = {}
     self.methods = []
@@ -77,7 +78,9 @@ class Injector:
       for dependency in typeToInst.inject:
         params = {}
         good = True
-        if self.params.has_key(dependency):
+        if self.nameToParamBindings[key].has_key(dependency):
+          params[dependency] = self.construct(runner, self.nameToParamBindings[key][dependency], arg)
+        elif self.params.has_key(dependency):
           params[dependency] = self.params[dependency]
         elif self.nameToClassMap[dependency] != None:
           params[dependency] = self.construct(dependency)
@@ -92,7 +95,7 @@ class Injector:
         self.instantiated[key].initialize()
         return self.instantiated[key]
     elif self.params.has_key(key):
-      return self.handleKeyValidation(self.cookies[key], arg)
+      return self.handleKeyValidation(self.params[key], arg)
     elif arg != None and isinstance(arg, str) and len(arg) > len("method:") and arg[0:len("method:")] == "method:":
       method = arg[len("method:"):]
       if not method in self.methods:
@@ -127,7 +130,7 @@ class Injector:
         else:
           return False
       ctr += 1
-    ret = runner.run(method, params) #self.call(method, params)
+    ret = runner.run(method, params)
 
     if not internal:    
       for key in self.instantiated:
