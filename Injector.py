@@ -32,6 +32,10 @@ class Injector:
   def getSpecs(self, method):
     return inspect.getargspec(eval(method))
 
+  def addToClassMap(self, paramName, paramType, paramBindings):
+    self.nameToClassMap[paramName] = paramType
+    self.nameToParamBindings[paramName] = paramBindings
+
   def handleKeyValidation(self, key, arg = None):
     if arg == None:
       return key

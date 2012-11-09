@@ -41,6 +41,5 @@ class CommandLineInjector:
     return self
 
   def addClass(self, key, clazz, paramMapping = {}):
-    self.injector.nameToClassMap[key] = clazz
-    self.injector.nameToParamBindings[key] = paramMapping
+    self.injector.addToClassMap(key, clazz, paramMapping)
     return self
